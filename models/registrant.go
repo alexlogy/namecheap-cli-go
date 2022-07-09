@@ -1,0 +1,40 @@
+package models
+
+type Registrant struct {
+	RegistrantFirstName     string
+	RegistrantLastName      string
+	RegistrantAddress1      string
+	RegistrantCity          string
+	RegistrantStateProvince string
+	RegistrantPostalCode    string
+	RegistrantCountry       string
+	RegistrantPhone         string
+	RegistrantEmailAddress  string
+	TechFirstName           string
+	TechLastName            string
+	TechAddress1            string
+	TechCity                string
+	TechStateProvince       string
+	TechPostalCode          string
+	TechCountry             string
+	TechPhone               string
+	TechEmailAddress        string
+	AdminFirstName          string
+	AdminLastName           string
+	AdminAddress1           string
+	AdminCity               string
+	AdminStateProvince      string
+	AdminPostalCode         string
+	AdminCountry            string
+	AdminPhone              string
+	AdminEmailAddress       string
+	AuxBillingFirstName     string
+	AuxBillingLastName      string
+	AuxBillingAddress1      string
+	AuxBillingCity          string
+	AuxBillingStateProvince string
+	AuxBillingPostalCode    string
+	AuxBillingCountry       string
+	AuxBillingPhone         string
+	AuxBillingEmailAddress  string
+}
