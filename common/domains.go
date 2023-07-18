@@ -2,6 +2,7 @@ package common
 
 import (
 	"encoding/xml"
+	"fmt"
 	"log"
 	"namecheap-cli/consts"
 	"namecheap-cli/models"
@@ -9,7 +10,53 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/gocarina/gocsv"
 )
+
+func DomainsGetListAll() {
+	currentPage := 1
+	for {
+		payload := make(map[string]string)
+		payload["Command"] = "namecheap.domains.getList"
+		payload["PageSize"] = "100"
+		payload["SortBy"] = "NAME"
+		payload["Page"] = strconv.Itoa(currentPage)
+
+		resp := utils.PostRequest(consts.NamecheapAPI, payload)
+
+		var domainGetListResponse models.DomainsGetListResponse
+		err := xml.Unmarshal(resp, &domainGetListResponse)
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		csvContent := ""
+		if currentPage == 1 {
+			csvContent, err = gocsv.MarshalString(domainGetListResponse.CommandResponse.Domains)
+		} else {
+			csvContent, err = gocsv.MarshalStringWithoutHeaders(domainGetListResponse.CommandResponse.Domains)
+		}
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		fmt.Print(csvContent)
+
+		isLastPage := (*domainGetListResponse.CommandResponse.Paging.CurrentPage * *domainGetListResponse.CommandResponse.Paging.PageSize) >= *domainGetListResponse.CommandResponse.Paging.TotalItems
+		if isLastPage {
+			break
+		}
+
+		currentPage++
+
+		// need to sleep for 8 seconds to avoid throttling :(
+		time.Sleep(3 * time.Second)
+	}
+}
 
 func DomainsGetList(domain string, page int) {
 	payload := make(map[string]string)
