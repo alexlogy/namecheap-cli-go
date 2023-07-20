@@ -2,11 +2,12 @@ package utils
 
 import (
 	"fmt"
-	tablewriter "github.com/olekukonko/tablewriter"
 	"namecheap-cli/models"
 	"os"
 	"strconv"
 	"sync"
+
+	tablewriter "github.com/olekukonko/tablewriter"
 )
 
 func WriteTable(header []string, data [][]string) {
@@ -312,6 +313,46 @@ func PrintDomainsRenewTable(domain models.DomainRenewResultResponse, domainDetai
 	wg.Wait()
 
 	WriteTable(header, output)
+}
+
+func PrintDomainsReactivateTable(domain models.DomainReactivateResultResponse) {
+	var wg sync.WaitGroup
+	output := make([][]string, 0, 1)
+
+	wg.Add(1)
+	go FormatDomainsReactivateTable(&wg, &output, domain)
+
+	var header []string
+	header = []string{
+		"OrderID",
+		"TransactionID",
+		"DomainID",
+		"DomainName",
+		"RenewStatus",
+		"ChargedAmount",
+		"RenewalYrs",
+		"New Expiry",
+	}
+
+	wg.Wait()
+
+	WriteTable(header, output)
+}
+
+func FormatDomainsReactivateTable(wg *sync.WaitGroup, output *[][]string,
+	domain models.DomainReactivateResultResponse) {
+
+	defer wg.Done()
+
+	row := []string{
+		strconv.Itoa(*domain.OrderID),
+		strconv.Itoa(*domain.TransactionID),
+		*domain.DomainName,
+		fmt.Sprintf("%.2f", *domain.ChargedAmount),
+		strconv.FormatBool(*domain.IsSuccess),
+	}
+
+	*output = append(*output, row)
 }
 
 func FormatUsersGetBalanceTable(wg *sync.WaitGroup, output *[][]string, users models.UsersGetBalanceResultResponse) {
