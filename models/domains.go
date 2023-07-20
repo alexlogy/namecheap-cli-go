@@ -57,7 +57,7 @@ type DomainCreateResultResponse struct {
 }
 
 /*
-	domain.setcontacts
+domain.setcontacts
 */
 type DomainsSetContactsResponse struct {
 	XMLName           *xml.Name                          `xml:"ApiResponse"`
@@ -76,7 +76,7 @@ type DomainSetContactsResultResponse struct {
 }
 
 /*
-	domain.check
+domain.check
 */
 type DomainsCheckResponse struct {
 	XMLName           *xml.Name                    `xml:"ApiResponse"`
@@ -102,7 +102,7 @@ type DomainCheckResultResponse struct {
 }
 
 /*
-	domain.renew
+domain.renew
 */
 type DomainsRenewResponse struct {
 	XMLName           *xml.Name                    `xml:"ApiResponse"`
@@ -123,6 +123,24 @@ type DomainRenewResultResponse struct {
 	TransactionID *int           `xml:"TransactionID,attr"`
 	ChargedAmount *float64       `xml:"ChargedAmount,attr"`
 	DomainDetails *DomainDetails `xml:"DomainDetails"`
+}
+
+type DomainsReactivateResponse struct {
+	XMLName           *xml.Name                         `xml:"ApiResponse"`
+	ApiResponseStatus *string                           `xml:"Status,attr"`
+	Errors            *Error                            `xml:"Errors>Error"`
+	CommandResponse   *DomainsReactivateCommandResponse `xml:"CommandResponse"`
+}
+
+type DomainsReactivateCommandResponse struct {
+	DomainRenewResult *DomainReactivateResultResponse `xml:"DomainReactivateResult"`
+}
+type DomainReactivateResultResponse struct {
+	DomainName    *string  `xml:"Domain,attr"`
+	IsSuccess     *bool    `xml:"IsSuccess,attr"`
+	ChargedAmount *float64 `xml:"ChargedAmount,attr"`
+	OrderID       *int     `xml:"OrderID,attr"`
+	TransactionID *int     `xml:"TransactionID,attr"`
 }
 
 type DomainDetails struct {

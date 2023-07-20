@@ -332,3 +332,41 @@ func DomainsRenew(domain string, years string) {
 
 	utils.PrintDomainsRenewTable(domainsRenewResults, domainDetails, years)
 }
+
+func DomainsReactivate(domain string) {
+	// check for invalid domain
+	regex := "(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]"
+	matched, err := regexp.MatchString(regex, domain)
+	if !matched {
+		log.Fatalln("[error] invalid domain input!")
+	}
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	payload := make(map[string]string)
+	payload["Command"] = "namecheap.domains.reactivate"
+	payload["DomainName"] = domain
+
+	fmt.Println(payload)
+
+	var domainReactivateResponse models.DomainsReactivateResponse
+
+	resp := utils.PostRequest(consts.NamecheapAPI, payload)
+
+	err = xml.Unmarshal(resp, &domainReactivateResponse)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// api status validation
+	respStatus := *domainReactivateResponse.ApiResponseStatus
+
+	if respStatus == "ERROR" {
+		log.Fatalf("[error] code: %s - message: %s", *domainReactivateResponse.Errors.Number, *domainReactivateResponse.Errors.Message)
+	}
+
+	domainsRenewResults := *domainReactivateResponse.CommandResponse.DomainRenewResult
+
+	utils.PrintDomainsReactivateTable(domainsRenewResults)
+}
